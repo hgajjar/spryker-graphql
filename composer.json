@@ -1,0 +1,11 @@
+{
+  "name": "inviqa/spryker-graphql",
+  "description": "GraphQL module",
+  "autoload": {
+    "psr-4": {
+      "Inviqa\\": "src/Inviqa/"
+    }
+  },
+  "minimum-stability": "dev",
+  "prefer-stable": true
+}

@@ -1,0 +1,32 @@
+<?php
+
+namespace Generated\Shared\Graphql\Types;
+
+use GraphQL\Type\Definition\ObjectType;
+use GraphQL\Type\Definition\Type;
+
+/**
+ * !!! THIS FILE IS AUTO-GENERATED, EVERY CHANGE WILL BE LOST WITH THE NEXT RUN OF GRAPHQL TYPE GENERATOR
+ * !!! DO NOT CHANGE ANYTHING IN THIS FILE
+ */
+class {{ className }} extends ObjectType
+{
+    public function __construct()
+    {
+        $config = [
+            'name' => '{{ constructorDefinition.name }}',
+            'description' => '{{ constructorDefinition.name }}',
+            'fields' => function() {
+                return [
+                    {% for key, value in constructorDefinition.fields %}
+'{{ key }}' => [
+                        'type' => {{ value.type }},
+                        'description' => '{{ key }}',
+                    ],
+                    {% endfor %}
+];
+            },
+        ];
+        parent::__construct($config);
+    }
+}

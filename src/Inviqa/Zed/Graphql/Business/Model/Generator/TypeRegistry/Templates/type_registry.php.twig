@@ -1,0 +1,17 @@
+<?php
+
+namespace Generated\Shared\Graphql\Types;
+
+class TypeRegistry
+{
+    {% for type in types %}
+    private static ${{ type }};
+    {% endfor %}
+
+    {% for type in types %}
+    public static function {{ type }}()
+    {
+        return self::${{ type }} ?: (self::${{ type }} = new {{ type }}());
+    }
+    {% endfor %}
+}
