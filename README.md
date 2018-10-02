@@ -3,7 +3,12 @@
 ## How to install?
 1. ```composer require inviqa/spryker-graphql```
 2. Add ```Inviqa``` to ```$config[KernelConstants::CORE_NAMESPACES]``` in config_default.php
-3. Add ```new GraphqlControllerProvider($isSsl)``` to ```Pyz\Yves\Application\YvesBootstrap::getControllerProviderStack()```  
+3. Add ```new GraphqlControllerProvider($isSsl)``` to ```Pyz\Yves\Application\YvesBootstrap::getControllerProviderStack()```
+4. Add ```new GraphqlConsole()``` to ```Pyz\Zed\Console\ConsoleDependencyProvider::getConsoleCommands()```
+5. Generate GraphQL schema types using following command
+```$bash
+vendor/bin/console graphql:types:generate
+```  
 
 ## How to use?
 **GraphQL endpoint:** https://\<yves host\>/graphql
