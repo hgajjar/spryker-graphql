@@ -10,6 +10,7 @@ class DefinitionNormalizer implements DefinitionNormalizerInterface
     const KEY_PROPERTY = 'property';
     const KEY_BUNDLES = 'bundles';
     const KEY_DEPRECATED = 'deprecated';
+    const KEY_UNDERSCORED_PROPERTY_NAMES = 'underscored_property_names';
 
     public function normalizeDefinitions(array $transferDefinitions): array
     {
@@ -21,6 +22,7 @@ class DefinitionNormalizer implements DefinitionNormalizerInterface
                 self::KEY_NAME => $transferDefinition[self::KEY_NAME],
                 self::KEY_DEPRECATED => isset($transferDefinition[self::KEY_DEPRECATED]) ? $transferDefinition[self::KEY_DEPRECATED] : null,
                 self::KEY_PROPERTY => $this->normalizeAttributes($transferDefinition[self::KEY_PROPERTY], $transferDefinition[self::KEY_BUNDLE]),
+                self::KEY_UNDERSCORED_PROPERTY_NAMES => ($transferDefinition[self::KEY_UNDERSCORED_PROPERTY_NAMES])?? null,
             ];
 
             $normalizedDefinitions[] = $normalizedDefinition;

@@ -7,16 +7,18 @@ use GraphQL\GraphQL;
 use GraphQL\Type\Schema;
 use Spryker\Yves\Kernel\Controller\AbstractController as SprykerAbstractController;
 use Inviqa\Yves\Graphql\Schema\Type\MutationType;
-use Inviqa\Yves\Graphql\Schema\Type\QueryType;
 use Symfony\Component\HttpFoundation\Request;
 
+/**
+ * @method \Inviqa\Yves\Graphql\GraphqlFactory getFactory()
+ */
 class GraphqlController extends SprykerAbstractController
 {
 
     public function indexAction(Request $request)
     {
         $schema = new Schema([
-            'query' => new QueryType(),
+            'query' => $this->getFactory()->createQueryType(),
             'mutation' => new MutationType()
         ]);
 

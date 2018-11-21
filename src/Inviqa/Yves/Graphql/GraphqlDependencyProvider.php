@@ -2,6 +2,7 @@
 
 namespace Inviqa\Yves\Graphql;
 
+use Pyz\Yves\Application\Plugin\ApplicationGraphqlPlugin;
 use Spryker\Yves\Kernel\AbstractBundleDependencyProvider;
 use Spryker\Yves\Kernel\Container;
 use Spryker\Yves\Kernel\Plugin\Pimple;
@@ -16,6 +17,8 @@ class GraphqlDependencyProvider extends AbstractBundleDependencyProvider
     const CLIENT_CATALOG = 'catalog client';
 
     const PLUGIN_APPLICATION = 'application plugin';
+
+    const PLUGIN_GRAPHQL = 'graphql plugins';
 
     public function provideDependencies(Container $container): Container
     {
@@ -55,6 +58,12 @@ class GraphqlDependencyProvider extends AbstractBundleDependencyProvider
             $pimplePlugin = new Pimple();
 
             return $pimplePlugin->getApplication();
+        };
+
+        $container[self::PLUGIN_GRAPHQL] = function() {
+            return [
+                new ApplicationGraphqlPlugin()
+            ];
         };
 
         return $container;

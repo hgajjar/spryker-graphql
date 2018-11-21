@@ -12,4 +12,9 @@ interface ClassDefinitionInterface extends DefinitionInterface
      */
     public function getConstructorDefinition();
 
+    /**
+     * @return array
+     */
+    public function getIncludeClassesDefinition();
+
 }

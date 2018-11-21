@@ -2,13 +2,8 @@
 
 namespace Inviqa\Yves\Graphql\Schema\Type;
 
-use Generated\Shared\Graphql\Types\TypeRegistry;
+use Inviqa\Yves\Graphql\Plugin\AbstractGraphqlPlugin;
 use GraphQL\Type\Definition\ResolveInfo;
-use GraphQL\Type\Definition\Type;
-use Inviqa\Yves\Graphql\DataResolver\FeaturedProductsDataResolver;
-use Inviqa\Yves\Graphql\DataResolver\NavigationDataResolver;
-use Inviqa\Yves\Graphql\DataResolver\QuoteDataResolver;
-use Inviqa\Yves\Graphql\Schema\Type\Query\SearchProductAbstractType;
 
 /**
  * @method \Inviqa\Yves\Graphql\GraphqlFactory getFactory()
@@ -16,38 +11,31 @@ use Inviqa\Yves\Graphql\Schema\Type\Query\SearchProductAbstractType;
 class QueryType extends AbstractType
 {
 
-    public function __construct()
+    /**
+     * @param $graphqlPlugins array|AbstractGraphqlPlugin[]
+     */
+    public function __construct(array $graphqlPlugins)
     {
+        $fields = [];
+        foreach ($graphqlPlugins as $plugin) {
+            $fields[$plugin->getFieldName()] = [
+                'type' => $plugin->getFieldType(),
+                'description' => $plugin->getFieldDescription(),
+            ];
+        }
+
         $config = [
             'name' => 'Query',
-            'fields' => [
-                'quote' => [
-                    'type' => TypeRegistry::QuoteType(),
-                    'description' => 'Return cart items',
-                ],
-                'navigation' => [
-                    'type' => TypeRegistry::NavigationTreeType(),
-                    'description' => 'Return navigation tree'
-                ],
-                'featuredProducts' => [
-                    'type' => Type::listOf(new SearchProductAbstractType()),
-                    'description' => 'Return featured products'
-                ]
-            ],
-            'resolveField' => function($val, $args, $context, ResolveInfo $info) {
-                switch ($info->fieldName) {
-                    case 'quote':
-                        $resolver = new QuoteDataResolver();
-                        return $resolver->resolveData($args);
-                    case 'navigation':
-                        $resolver = new NavigationDataResolver();
-                        return $resolver->resolveData($args);
-                    case 'featuredProducts':
-                        $resolver = new FeaturedProductsDataResolver();
-                        return $resolver->resolveData($args);
+            'fields' => $fields,
+            'resolveField' => function($val, $args, $context, ResolveInfo $info) use ($graphqlPlugins) {
+                foreach ($graphqlPlugins as $plugin) {
+                    if ($plugin->getFieldName() === $info->fieldName) {
+                        return $plugin->resolveField($args);
+                    }
                 }
             }
         ];
+
         parent::__construct($config);
     }
 

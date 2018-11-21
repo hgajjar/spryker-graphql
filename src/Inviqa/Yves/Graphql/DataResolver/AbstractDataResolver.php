@@ -4,7 +4,7 @@ namespace Inviqa\Yves\Graphql\DataResolver;
 
 use Spryker\Yves\Kernel\ClassResolver\Factory\FactoryResolver;
 
-class AbstractDataResolver
+abstract class AbstractDataResolver implements DataResolverInterface
 {
 
     /**
@@ -39,5 +39,7 @@ class AbstractDataResolver
     {
         return new FactoryResolver();
     }
+
+    abstract public function resolveData($args);
 
 }

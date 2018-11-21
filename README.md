@@ -94,6 +94,8 @@ mutation {
 
 
 ## TODO:
+- [x] Move featured products data provider out of graphql module
+- [ ] Move other data providers (quote, navigation) and mutations out of graphql module 
 - [ ] Add tests
 - [ ] Create data resolver for all parent types manually and feed in QueryType
 - [ ] (later, not decided) Use jwt token and store session ID int it, and use it to initiate session.

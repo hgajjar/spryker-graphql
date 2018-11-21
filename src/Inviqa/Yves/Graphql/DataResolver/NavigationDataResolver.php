@@ -2,7 +2,7 @@
 
 namespace Inviqa\Yves\Graphql\DataResolver;
 
-use Generated\Shared\Transfer\NavigationTreeTransfer;
+use Spryker\Shared\Kernel\Transfer\AbstractTransfer;
 
 /**
  * @method \Inviqa\Yves\Graphql\GraphqlFactory getFactory()
@@ -41,7 +41,7 @@ class NavigationDataResolver extends AbstractDataResolver
      *    }
      * }
      */
-    public function resolveData($args): ?NavigationTreeTransfer
+    public function resolveData($args): AbstractTransfer
     {
         $navigationClient = $this->getFactory()->getNavigationClient();
 

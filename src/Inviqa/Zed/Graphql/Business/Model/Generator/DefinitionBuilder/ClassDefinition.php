@@ -21,6 +21,8 @@ class ClassDefinition implements ClassDefinitionInterface
      */
     private $constructorDefinition = [];
 
+    private $includeClassesDefinition = [];
+
     /**
      * @param array $definition
      *
@@ -31,6 +33,7 @@ class ClassDefinition implements ClassDefinitionInterface
         $this->setName($definition['name']);
 
         if (isset($definition['property'])) {
+            $this->addIncludeClassesDefinition($definition);
             $this->addConstructorDefinition($definition);
         }
 
@@ -82,10 +85,13 @@ class ClassDefinition implements ClassDefinitionInterface
 
     private function addConstructorDefinition(array $definition)
     {
-        $properties = $this->normalizePropertyTypes($definition['property']);
+        $properties = $this->normalizePropertyTypes($definition['property'], $definition[DefinitionNormalizer::KEY_NAME]);
         $fields = [];
         foreach ($properties as $property) {
-            $fields[$this->getPropertyName($property)] = [
+            $name = (isset($definition[DefinitionNormalizer::KEY_UNDERSCORED_PROPERTY_NAMES]) &&
+                $definition[DefinitionNormalizer::KEY_UNDERSCORED_PROPERTY_NAMES] !== null)?
+                $property['name'] : $this->getPropertyName($property);
+            $fields[$name] = [
                 'type' => $property['type']
             ];
         }
@@ -103,12 +109,16 @@ class ClassDefinition implements ClassDefinitionInterface
      * Properties which are Transfer MUST be suffixed with Transfer
      *
      * @param array $properties
+     * @param string $definitionName
      *
      * @return array
      */
-    private function normalizePropertyTypes(array $properties)
+    private function normalizePropertyTypes(array $properties, string $definitionName)
     {
         $normalizedProperties = [];
+
+        $typeClass = $this->getTypeClassName($definitionName);
+
         foreach ($properties as $property) {
             $this->assertProperty($property);
 
@@ -120,13 +130,13 @@ class ClassDefinition implements ClassDefinitionInterface
 
             if ($this->isTypedArray($property)) {
                 $type = preg_replace('/\[\]/', '', $property['type']);
-                $property['type'] = 'Type::listOf('.$this->getSchemaType($type).')';
+                $property['type'] = $typeClass.'::listOf('.$this->getSchemaType($type, $typeClass).')';
             } elseif ($this->isTypeOrTypeArray($property['type'])) {
-                $property = $this->buildTypePropertyDefinition($property);
+                $property = $this->buildTypePropertyDefinition($property, $typeClass);
             } elseif ($this->isArray($property)) {
-                $property['type'] = 'Type::listOf(Type::string())';
+                $property['type'] = $typeClass.'::listOf('.$typeClass.'::string())';
             } else {
-                $property['type'] = $this->getSchemaType($property['type']);
+                $property['type'] = $this->getSchemaType($property['type'], $typeClass);
             }
 
             $normalizedProperties[] = $property;
@@ -142,7 +152,7 @@ class ClassDefinition implements ClassDefinitionInterface
      */
     private function assertProperty(array $property)
     {
-        $this->assertPropertyName($property['name']);
+//        $this->assertPropertyName($property['name']);
     }
 
     /**
@@ -207,37 +217,39 @@ class ClassDefinition implements ClassDefinitionInterface
 
     /**
      * @param string $type
+     * @param string $typeClass
      *
      * @return bool|string
      */
-    private function getSchemaType(string $type)
+    private function getSchemaType(string $type, string $typeClass)
     {
         switch ($type) {
             case 'string':
-                return 'Type::string()';
+                return $typeClass.'::string()';
                 break;
             case 'int':
             case 'integer':
-                return 'Type::int()';
+                return $typeClass.'::int()';
             case 'float':
-                return 'Type::float()';
+                return $typeClass.'::float()';
             case 'bool':
             case 'boolean':
-                return 'Type::boolean()';
+                return $typeClass.'::boolean()';
         }
     }
 
     /**
      * @param array $property
+     * @param string $typeClass
      *
      * @return array
      */
-    private function buildTypePropertyDefinition(array $property)
+    private function buildTypePropertyDefinition(array $property, string $typeClass)
     {
         $property['is_transfer'] = true;
 
         if (preg_match('/\[\]$/', $property['type'])) {
-            $property['type'] = 'Type::listOf(TypeRegistry::'.str_replace('[]', '', $property['type']).'Type())';
+            $property['type'] = $typeClass.'::listOf(TypeRegistry::'.str_replace('[]', '', $property['type']).'Type())';
             $property['is_collection'] = true;
 
             return $property;
@@ -251,4 +263,23 @@ class ClassDefinition implements ClassDefinitionInterface
 
         return $property;
     }
+
+    private function addIncludeClassesDefinition(array $definition)
+    {
+        $this->includeClassesDefinition = [
+            'GraphQL\Type\Definition\ObjectType',
+            'GraphQL\Type\Definition\Type as '.$this->getTypeClassName($definition[DefinitionNormalizer::KEY_NAME]),
+        ];
+    }
+
+    private function getTypeClassName(string $definitionName): string
+    {
+        return ($definitionName !== 'Type')? 'Type' : 'GraphqlType';
+    }
+
+    public function getIncludeClassesDefinition()
+    {
+        return $this->includeClassesDefinition;
+    }
+
 }

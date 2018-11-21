@@ -2,6 +2,7 @@
 
 namespace Inviqa\Yves\Graphql;
 
+use Inviqa\Yves\Graphql\Schema\Type\QueryType;
 use Pyz\Client\Catalog\CatalogClientInterface;
 use Pyz\Yves\Cart\Handler\CartOperationHandler;
 use Pyz\Yves\Cart\Handler\ProductBundleCartOperationHandler;
@@ -98,5 +99,15 @@ class GraphqlFactory extends AbstractFactory
     public function getCatalogClient(): CatalogClientInterface
     {
         return $this->getProvidedDependency(GraphqlDependencyProvider::CLIENT_CATALOG);
+    }
+
+    public function getGraphqlPlugins(): array
+    {
+        return $this->getProvidedDependency(GraphqlDependencyProvider::PLUGIN_GRAPHQL);
+    }
+
+    public function createQueryType(): QueryType
+    {
+        return new QueryType($this->getGraphqlPlugins());
     }
 }

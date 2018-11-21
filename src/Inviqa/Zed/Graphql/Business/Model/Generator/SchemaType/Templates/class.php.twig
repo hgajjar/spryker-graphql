@@ -2,8 +2,9 @@
 
 namespace Generated\Shared\Graphql\Types;
 
-use GraphQL\Type\Definition\ObjectType;
-use GraphQL\Type\Definition\Type;
+{% for includeClass in includeClassesDefinition %}
+use {{ includeClass }};
+{% endfor %}
 
 /**
  * !!! THIS FILE IS AUTO-GENERATED, EVERY CHANGE WILL BE LOST WITH THE NEXT RUN OF GRAPHQL TYPE GENERATOR

@@ -2,7 +2,7 @@
 
 namespace Inviqa\Yves\Graphql\DataResolver;
 
-use Generated\Shared\Transfer\QuoteTransfer;
+use Spryker\Shared\Kernel\Transfer\AbstractTransfer;
 
 /**
  * @method \Inviqa\Yves\Graphql\GraphqlFactory getFactory()
@@ -10,7 +10,7 @@ use Generated\Shared\Transfer\QuoteTransfer;
 class QuoteDataResolver extends AbstractDataResolver
 {
 
-    public function resolveData($args): QuoteTransfer
+    public function resolveData($args): AbstractTransfer
     {
         $quoteTransfer = $this->getFactory()->getCartClient()->getQuote();
 
